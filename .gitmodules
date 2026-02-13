@@ -1,0 +1,12 @@
+[submodule ".secrets"]
+	path = .secrets
+	url = git@github.com:ukwhatn/.secrets.git
+[submodule ".claude"]
+	path = .claude
+	url = git@github.com:ukwhatn/.claude.git
+[submodule ".config/fish/functions"]
+	path = .config/fish/functions
+	url = git@github.com:ukwhatn/functions.git
+[submodule ".ssh"]
+	path = .ssh
+	url = git@github.com:ukwhatn/.ssh.git
