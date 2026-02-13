@@ -1,0 +1,80 @@
+# ===== デフォルト: 全て無視 =====
+*
+
+# ===== このファイル自体 =====
+!.gitignore
+!.gitmodules
+
+# ===== シェル設定 =====
+!.bashrc
+!.bash_profile
+!.zshrc
+!.zprofile
+!.profile
+!.cshrc
+!.tcshrc
+
+# ===== ターミナル =====
+!.tmux.conf
+
+# ===== Git設定 =====
+!.gitconfig
+!.gitconfig-dena
+
+# ===== .local/bin/env =====
+!.local/
+.local/*
+!.local/bin/
+.local/bin/*
+!.local/bin/env
+
+# ===== .config 配下 =====
+!.config/
+.config/*
+
+# --- git ---
+!.config/git/
+.config/git/*
+!.config/git/ignore
+
+# --- starship ---
+!.config/starship.toml
+
+# --- gh ---
+!.config/gh/
+.config/gh/*
+!.config/gh/config.yml
+!.config/gh/hosts.yml
+
+# --- fish ---
+!.config/fish/
+.config/fish/*
+!.config/fish/config.fish
+!.config/fish/fish_plugins
+!.config/fish/conf.d/
+.config/fish/conf.d/*
+!.config/fish/conf.d/fish_frozen_key_bindings.fish
+!.config/fish/conf.d/fish_frozen_theme.fish
+!.config/fish/conf.d/uv.env.fish
+!.config/fish/conf.d/z.fish
+
+# --- karabiner ---
+!.config/karabiner/
+.config/karabiner/*
+!.config/karabiner/karabiner.json
+
+# --- mise ---
+!.config/mise/
+.config/mise/*
+!.config/mise/config.toml
+
+# ===== スクリプト =====
+!dotfiles/
+!dotfiles/**
+
+# ===== LaunchAgent =====
+!Library/
+Library/*
+!Library/LaunchAgents/
+Library/LaunchAgents/*
+!Library/LaunchAgents/com.user.dotfiles-sync.plist

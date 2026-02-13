@@ -1,0 +1,19 @@
+[user]
+	name = Yuki Watanabe
+	email = ukwhatn@gmail.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID0Dr6NGE5FnAtkps52sCIUV54XqG4kh/YmKqWKGfXFj
+[push]
+	autoSetupRemote = true
+[pull]
+	rebase = true
+[core]
+	autocrlf = input
+	editor = vim
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true
+[includeIf "hasconfig:remote.*.url:git@github.com-dena:*/**"]
+	path = /Users/yuki.c.watanabe/.gitconfig-dena

@@ -1,0 +1,59 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+__MACOSX
+Thumbs.db
+ehthumbs.db
+
+# General Editor / IDE files
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.idea/
+*.swp
+*.swo
+*~
+*#
+
+# General Temporary / Log files
+*.log
+*.tmp
+*.temp
+*.bak
+.cache/
+
+# Environment variables
+.env
+*.env
+
+# Dependencies (Generally better in project .gitignore, but can be here as a fallback)
+node_modules/
+vendor/
+
+# Build artifacts (Generally better in project .gitignore)
+build/
+dist/
+*.pyc
+__pycache__/
+
+# localonly
+localonly*
+
+**/.claude/settings.local.json
+
+*.local
+.claude/settings.local.json
+.serena
+.tool-versions
+mise*.toml
+AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+.local_docs
+
+*.worktrees
+

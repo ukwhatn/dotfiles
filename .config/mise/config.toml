@@ -1,0 +1,5 @@
+[tools]
+go = "latest"
+node = "20.18.0"
+python = "3.13.9"
+terraform = "1.6.2"
