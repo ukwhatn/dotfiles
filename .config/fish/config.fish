@@ -43,6 +43,9 @@ alias ccd="claude --dangerously-skip-permissions"
 
 alias cpv="~/go/bin/claude-plans-viewer"
 
+# dotfiles
+alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
+
 # starship
 starship init fish | source
 

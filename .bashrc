@@ -44,6 +44,9 @@ alias ws="webstorm"
 alias cc="claude"
 alias ccd="claude --dangerously-skip-permissions"
 
+# dotfiles
+alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
+
 # mise
 eval "$(mise activate bash)"
 
