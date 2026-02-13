@@ -68,6 +68,12 @@
 .config/mise/*
 !.config/mise/config.toml
 
+# ===== submodule =====
+!.secrets
+!.claude
+!.config/fish/functions
+!.ssh
+
 # ===== スクリプト =====
 !dotfiles/
 !dotfiles/**
