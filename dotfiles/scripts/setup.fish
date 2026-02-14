@@ -82,16 +82,6 @@ if not dotfiles submodule update --init --recursive
 end
 echo "submodule初期化完了"
 
-# 6. LaunchAgent登録
-set -l PLIST "$HOME/Library/LaunchAgents/com.user.dotfiles-sync.plist"
-if test -f $PLIST
-    echo "LaunchAgentを登録..."
-    launchctl load $PLIST
-    echo "LaunchAgent登録完了"
-else
-    echo "警告: LaunchAgent plistが見つかりません: $PLIST"
-end
-
 echo ""
 echo "=== セットアップ完了 ==="
 echo "バックアップ先: $BACKUP_DIR"
@@ -99,4 +89,3 @@ echo ""
 echo "確認コマンド:"
 echo "  dotfiles status"
 echo "  dotfiles submodule status"
-echo "  launchctl list | grep dotfiles-sync"

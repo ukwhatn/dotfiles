@@ -77,10 +77,3 @@
 # ===== スクリプト =====
 !dotfiles/
 !dotfiles/**
-
-# ===== LaunchAgent =====
-!Library/
-Library/*
-!Library/LaunchAgents/
-Library/LaunchAgents/*
-!Library/LaunchAgents/com.user.dotfiles-sync.plist
