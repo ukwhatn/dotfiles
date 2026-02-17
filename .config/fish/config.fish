@@ -38,8 +38,8 @@ alias gclean="git branch --merged | grep -v '*' | grep -vE '^\s*(main|master)\$'
 alias pc="pycharm"
 alias ws="webstorm"
 
-alias cc="claude"
-alias ccd="claude --dangerously-skip-permissions"
+# claude code: ターミナルタイトルの自動上書きを無効化（cc関数で手動設定するため）
+set -gx CLAUDE_CODE_DISABLE_TERMINAL_TITLE 1
 
 alias cpv="~/go/bin/claude-plans-viewer"
 
