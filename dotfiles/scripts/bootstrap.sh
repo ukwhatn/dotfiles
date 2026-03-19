@@ -70,27 +70,33 @@ dotfiles config init.defaultBranch main
 # checkout（コンフリクト時はバックアップして再試行）
 if ! dotfiles checkout 2>/dev/null; then
     echo "  コンフリクトするファイルをバックアップします..."
-    dotfiles checkout 2>&1 | grep "^\t" | while read -r file; do
-        file=$(echo "$file" | xargs)
-        if [ -e "$HOME/$file" ]; then
+    # コンフリクトファイル一覧を一旦ファイルに書き出し（pipefail回避）
+    dotfiles checkout 2>&1 > "$BACKUP_DIR/checkout_err.txt" || true
+    while IFS= read -r line; do
+        file=$(echo "$line" | sed 's/^[[:space:]]*//')
+        if [ -n "$file" ] && [ -e "$HOME/$file" ]; then
             mkdir -p "$(dirname "$BACKUP_DIR/$file")"
             mv "$HOME/$file" "$BACKUP_DIR/$file"
             echo "    バックアップ: $file"
         fi
-    done
+    done < "$BACKUP_DIR/checkout_err.txt"
     dotfiles checkout
 fi
 echo "  checkout 完了"
 
 # submodule のパスを取得し、既存ディレクトリをバックアップ（checkout後に.gitmodulesが読める）
 echo "  submodule 用の既存ディレクトリをバックアップ中..."
-git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}' | while read -r subpath; do
-    if [ -e "$HOME/$subpath" ] && [ ! -d "$HOME/$subpath/.git" ]; then
-        mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
-        mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
-        echo "    バックアップ: $subpath"
-    fi
-done || true
+if [ -f "$HOME/.gitmodules" ]; then
+    # pipefail 回避: for + command substitution で処理
+    subpaths=$(git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}') || true
+    for subpath in $subpaths; do
+        if [ -e "$HOME/$subpath" ]; then
+            mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
+            mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
+            echo "    バックアップ: $subpath"
+        fi
+    done
+fi
 
 # submodule
 echo "  submodule を初期化中..."
