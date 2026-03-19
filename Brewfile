@@ -27,6 +27,7 @@ brew "libyaml"
 brew "mas"                          # Mac App Store CLI (for Keynote, Numbers, Pages etc.)
 brew "mise"
 brew "mp3splt"
+brew "uv"                           # Python パッケージマネージャ
 brew "neovim"
 brew "pandoc"
 brew "parallel"

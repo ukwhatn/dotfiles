@@ -23,35 +23,35 @@ echo ""
 # 1. Xcode Command Line Tools
 # --------------------------------------------------------
 if ! xcode-select -p &>/dev/null; then
-    echo "[1/7] Xcode Command Line Tools をインストール中..."
+    echo "[1/8] Xcode Command Line Tools をインストール中..."
     xcode-select --install
     echo "インストール完了後、このスクリプトを再実行してください。"
     exit 0
 else
-    echo "[1/7] Xcode Command Line Tools: インストール済み"
+    echo "[1/8] Xcode Command Line Tools: インストール済み"
 fi
 
 # --------------------------------------------------------
 # 2. Homebrew
 # --------------------------------------------------------
 if ! command -v brew &>/dev/null; then
-    echo "[2/7] Homebrew をインストール中..."
+    echo "[2/8] Homebrew をインストール中..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-    echo "[2/7] Homebrew: インストール済み"
+    echo "[2/8] Homebrew: インストール済み"
 fi
 
 # --------------------------------------------------------
 # 3. git + fish（dotfiles clone に最低限必要）
 # --------------------------------------------------------
-echo "[3/7] git, fish をインストール中..."
+echo "[3/8] git, fish をインストール中..."
 brew install git fish
 
 # --------------------------------------------------------
 # 4. dotfiles clone & checkout
 # --------------------------------------------------------
-echo "[4/7] dotfiles をセットアップ中..."
+echo "[4/8] dotfiles をセットアップ中..."
 mkdir -p "$BACKUP_DIR"
 
 if [ -d "$DOTFILES_GIT" ]; then
@@ -86,7 +86,7 @@ echo "  submodule 初期化完了"
 # --------------------------------------------------------
 # 5. Brewfile でアプリ一括インストール
 # --------------------------------------------------------
-echo "[5/7] Brewfile からアプリをインストール中..."
+echo "[5/8] Brewfile からアプリをインストール中..."
 if [ -f "$HOME/Brewfile" ]; then
     brew bundle --file="$HOME/Brewfile" || true
     echo "  Brewfile インストール完了（一部失敗はスキップ済み）"
@@ -97,7 +97,7 @@ fi
 # --------------------------------------------------------
 # 6. fish plugin (fisher)
 # --------------------------------------------------------
-echo "[6/7] fish plugin をインストール中..."
+echo "[6/8] fish plugin をインストール中..."
 if [ -f "$HOME/.config/fish/fish_plugins" ]; then
     fish -c '
         if not functions -q fisher
@@ -112,9 +112,43 @@ else
 fi
 
 # --------------------------------------------------------
-# 7. tmux plugin manager (TPM)
+# 7. 開発環境 (mise, uv, bun)
 # --------------------------------------------------------
-echo "[7/7] tmux plugin をセットアップ中..."
+echo "[7/8] 開発環境をセットアップ中..."
+
+# mise: Brewfile でインストール済み → activate + install
+if command -v mise &>/dev/null; then
+    echo "  mise: ツールチェインをインストール中..."
+    if [ -f "$HOME/.config/mise/config.toml" ]; then
+        mise install --yes
+        echo "  mise install 完了"
+    else
+        echo "  mise config.toml が見つかりません。スキップします。"
+    fi
+else
+    echo "  警告: mise が見つかりません"
+fi
+
+# uv: Brewfile でインストール済み
+if command -v uv &>/dev/null; then
+    echo "  uv: インストール済み ($(uv --version))"
+else
+    echo "  警告: uv が見つかりません"
+fi
+
+# bun: brew にないため独自インストーラを使用
+if ! command -v bun &>/dev/null; then
+    echo "  bun: インストール中..."
+    curl -fsSL https://bun.sh/install | bash
+    echo "  bun インストール完了"
+else
+    echo "  bun: インストール済み ($(bun --version))"
+fi
+
+# --------------------------------------------------------
+# 8. tmux plugin manager (TPM)
+# --------------------------------------------------------
+echo "[8/8] tmux plugin をセットアップ中..."
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 if [ ! -d "$TPM_DIR" ]; then
     git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"

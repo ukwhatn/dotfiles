@@ -27,7 +27,8 @@ bash /tmp/bootstrap.sh git@github.com:ukwhatn/dotfiles.git
 | 4 | dotfiles clone & checkout（コンフリクト時は自動バックアップ） |
 | 5 | `~/Brewfile` で brew/cask/mas アプリ一括インストール |
 | 6 | fisher + fish plugins インストール |
-| 7 | tmux plugin manager (TPM) インストール |
+| 7 | 開発環境セットアップ（mise install, uv, bun） |
+| 8 | tmux plugin manager (TPM) インストール |
 
 ### セットアップ後の手動作業
 
