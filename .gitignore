@@ -17,6 +17,9 @@
 # ===== ターミナル =====
 !.tmux.conf
 
+# ===== Homebrew =====
+!Brewfile
+
 # ===== Git設定 =====
 !.gitconfig
 !.gitconfig-dena
