@@ -5,7 +5,6 @@
 
 # ----- Taps -----
 tap "bufbuild/buf"
-tap "homebrew/bundle"
 
 # ----- Formulas (CLI tools) -----
 brew "age"
