@@ -71,27 +71,28 @@ dotfiles config init.defaultBranch main
 SSH_SAVED=""
 if [ -d "$HOME/.ssh" ] && [ ! -f "$HOME/.ssh/.git" ]; then
     echo "  .ssh を保護（submodule clone に必要な SSH 鍵を維持）..."
-    mv "$HOME/.ssh" "$BACKUP_DIR/.ssh-preserve"
+    cp -a "$HOME/.ssh" "$BACKUP_DIR/.ssh-preserve"
     SSH_SAVED=1
 fi
 
-# checkout（コンフリクト時はバックアップして再試行）
-if ! dotfiles checkout 2>/dev/null; then
-    echo "  コンフリクトするファイルをバックアップします..."
-    dotfiles checkout 2>&1 > "$BACKUP_DIR/checkout_err.txt" || true
-    while IFS= read -r line; do
-        file=$(echo "$line" | sed 's/^[[:space:]]*//')
-        if [ -n "$file" ] && [ -e "$HOME/$file" ]; then
-            mkdir -p "$(dirname "$BACKUP_DIR/$file")"
-            mv "$HOME/$file" "$BACKUP_DIR/$file"
-            echo "    バックアップ: $file"
-        fi
-    done < "$BACKUP_DIR/checkout_err.txt"
-    dotfiles checkout
+# 管理対象ファイルの一覧を取得し、.ssh以外の既存ファイルを削除して強制checkout
+echo "  管理対象ファイルを展開中（.ssh 以外は強制上書き）..."
+tracked_files=$(dotfiles ls-tree -r --name-only HEAD 2>/dev/null) || true
+for f in $tracked_files; do
+    # .ssh 配下はスキップ
+    case "$f" in .ssh|.ssh/*) continue ;; esac
+    if [ -e "$HOME/$f" ]; then
+        rm -rf "$HOME/$f"
+    fi
+done
+# submodule ディレクトリも .ssh 以外を削除
+if [ -f "$HOME/.gitmodules" ]; then
+    rm -f "$HOME/.gitmodules"
 fi
+dotfiles checkout --force
 echo "  checkout 完了"
 
-# .ssh を復元（checkoutで上書きされた場合）
+# .ssh を復元
 if [ -n "$SSH_SAVED" ]; then
     rm -rf "$HOME/.ssh" 2>/dev/null || true
     mv "$BACKUP_DIR/.ssh-preserve" "$HOME/.ssh"
@@ -100,20 +101,13 @@ if [ -n "$SSH_SAVED" ]; then
     echo "  .ssh を復元しました"
 fi
 
-# submodule のパスを取得し、既存ディレクトリをバックアップ（checkout後に.gitmodulesが読める）
-echo "  submodule 用の既存ディレクトリをバックアップ中..."
+# submodule: .ssh 以外を初期化
+echo "  submodule 用の既存ディレクトリをクリーンアップ中..."
 if [ -f "$HOME/.gitmodules" ]; then
     subpaths=$(git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}') || true
     for subpath in $subpaths; do
-        # .ssh はスキップ（手動配置済み、submoduleで上書きしない）
-        if [ "$subpath" = ".ssh" ]; then
-            continue
-        fi
-        if [ -e "$HOME/$subpath" ]; then
-            mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
-            mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
-            echo "    バックアップ: $subpath"
-        fi
+        case "$subpath" in .ssh) continue ;; esac
+        rm -rf "$HOME/$subpath" 2>/dev/null || true
     done
 fi
 
