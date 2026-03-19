@@ -65,38 +65,35 @@ cask "google-japanese-ime"          # Google日本語入力
 cask "jetbrains-toolbox"            # JetBrains Toolbox
 cask "karabiner-elements"           # Karabiner-Elements
 cask "libreoffice"                  # LibreOffice
-cask "microsoft-excel"              # Microsoft Excel
-cask "microsoft-powerpoint"         # Microsoft PowerPoint
-cask "microsoft-remote-desktop"     # Microsoft Remote Desktop (already installed)
-cask "microsoft-word"               # Microsoft Word
 cask "notion"                       # Notion
 cask "obs"                          # OBS Studio
 cask "postman"                      # Postman
 cask "raycast"                      # Raycast
 cask "slack"                        # Slack
-cask "readdle-spark"                # Spark (Readdle)
 cask "tabby"                        # Tabby
 cask "termius"                      # Termius
-cask "the-unarchiver"               # The Unarchiver
 cask "unity-hub"                    # Unity Hub
 cask "visual-studio-code"           # Visual Studio Code
-cask "windows-app"                  # Windows App (旧Microsoft Remote Desktop)
 cask "zoom"                         # Zoom
 
 # ----- Mac App Store (via mas) -----
-# Keynote, Numbers, Pages はMac App Store経由のためmasで管理
-# `mas list` で確認後、以下のIDを更新してください
-# mas "Keynote", id: 409183694
-# mas "Numbers", id: 409203825
-# mas "Pages", id: 409201541
-# mas "Xcode", id: 497799835
+mas "GCal for Google Calendar", id: 1107163858
+mas "Keynote", id: 409183694
+mas "LadioCast", id: 411213048
+mas "Microsoft Excel", id: 462058435
+mas "Microsoft PowerPoint", id: 462062816
+mas "Microsoft Word", id: 462054704
+mas "Numbers", id: 409203825
+mas "Okta Extension App", id: 1439967473
+mas "Pages", id: 409201541
+mas "Spark", id: 1176895641
+mas "The Unarchiver", id: 425424353
+mas "Windows App", id: 1295203466
+mas "Xcode", id: 497799835
 
 # ----- Not available via Homebrew -----
 # DeNASecurityAgent.app    — 社内セキュリティツール（MDM配布）
 # Falcon.app               — CrowdStrike Falcon（MDM配布）
-# GCal for Google Calendar  — cask未提供
-# LadioCast.app            — cask未提供
-# Okta Extension App       — MDM配布
 # Rakuro.app               — cask未提供
 # Self Service+.app        — MDM配布
 # Google Docs/Sheets/Slides — PWA（Chrome経由）
