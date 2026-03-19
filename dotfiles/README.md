@@ -7,13 +7,13 @@ bare repository 方式で管理する dotfiles。
 ### ワンライナー
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/ukwhatn/dotfiles/main/dotfiles/scripts/bootstrap.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/ukwhatn/dotfiles/refs/heads/main/dotfiles/scripts/bootstrap.sh)
 ```
 
 または SSH clone:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ukwhatn/dotfiles/main/dotfiles/scripts/bootstrap.sh -o /tmp/bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/ukwhatn/dotfiles/refs/heads/main/dotfiles/scripts/bootstrap.sh -o /tmp/bootstrap.sh
 bash /tmp/bootstrap.sh git@github.com:ukwhatn/dotfiles.git
 ```
 

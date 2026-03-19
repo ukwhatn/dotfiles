@@ -5,7 +5,7 @@ set -euo pipefail
 # Homebrew → dotfiles clone → Brewfile → fish切り替えまで
 #
 # 使い方:
-#   curl -fsSL <raw_url> | bash
+#   bash <(curl -fsSL https://raw.githubusercontent.com/ukwhatn/dotfiles/refs/heads/main/dotfiles/scripts/bootstrap.sh)
 #   または: bash bootstrap.sh [remote_url]
 
 REMOTE_URL="${1:-git@github.com:ukwhatn/dotfiles.git}"
@@ -34,12 +34,16 @@ fi
 # --------------------------------------------------------
 # 2. Homebrew
 # --------------------------------------------------------
-if ! command -v brew &>/dev/null; then
+# PATHに /opt/homebrew/bin がない新規シェルでも検出できるようにする
+if [ -x /opt/homebrew/bin/brew ]; then
+    echo "[2/8] Homebrew: インストール済み"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif command -v brew &>/dev/null; then
+    echo "[2/8] Homebrew: インストール済み"
+else
     echo "[2/8] Homebrew をインストール中..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-    echo "[2/8] Homebrew: インストール済み"
 fi
 
 # --------------------------------------------------------
@@ -63,12 +67,22 @@ git clone --bare "$REMOTE_URL" "$DOTFILES_GIT"
 dotfiles config status.showUntrackedFiles no
 dotfiles config init.defaultBranch main
 
+# submodule のパスを取得し、既存ディレクトリをバックアップ
+echo "  submodule 用の既存ディレクトリをバックアップ中..."
+dotfiles config -f .gitmodules --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}' | while read -r subpath; do
+    if [ -e "$HOME/$subpath" ]; then
+        mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
+        mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
+        echo "    バックアップ: $subpath"
+    fi
+done
+
 # checkout（コンフリクト時はバックアップして再試行）
 if ! dotfiles checkout 2>/dev/null; then
     echo "  コンフリクトするファイルをバックアップします..."
     dotfiles checkout 2>&1 | grep "^\t" | while read -r file; do
         file=$(echo "$file" | xargs)
-        if [ -f "$HOME/$file" ]; then
+        if [ -e "$HOME/$file" ]; then
             mkdir -p "$(dirname "$BACKUP_DIR/$file")"
             mv "$HOME/$file" "$BACKUP_DIR/$file"
             echo "    バックアップ: $file"
