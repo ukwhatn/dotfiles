@@ -67,10 +67,17 @@ git clone --bare "$REMOTE_URL" "$DOTFILES_GIT"
 dotfiles config status.showUntrackedFiles no
 dotfiles config init.defaultBranch main
 
+# .ssh を退避（SSH鍵がないとsubmodule cloneできないため保護する）
+SSH_SAVED=""
+if [ -d "$HOME/.ssh" ] && [ ! -f "$HOME/.ssh/.git" ]; then
+    echo "  .ssh を保護（submodule clone に必要な SSH 鍵を維持）..."
+    mv "$HOME/.ssh" "$BACKUP_DIR/.ssh-preserve"
+    SSH_SAVED=1
+fi
+
 # checkout（コンフリクト時はバックアップして再試行）
 if ! dotfiles checkout 2>/dev/null; then
     echo "  コンフリクトするファイルをバックアップします..."
-    # コンフリクトファイル一覧を一旦ファイルに書き出し（pipefail回避）
     dotfiles checkout 2>&1 > "$BACKUP_DIR/checkout_err.txt" || true
     while IFS= read -r line; do
         file=$(echo "$line" | sed 's/^[[:space:]]*//')
@@ -84,12 +91,24 @@ if ! dotfiles checkout 2>/dev/null; then
 fi
 echo "  checkout 完了"
 
+# .ssh を復元（checkoutで上書きされた場合）
+if [ -n "$SSH_SAVED" ]; then
+    rm -rf "$HOME/.ssh" 2>/dev/null || true
+    mv "$BACKUP_DIR/.ssh-preserve" "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    chmod 600 "$HOME/.ssh"/* 2>/dev/null || true
+    echo "  .ssh を復元しました"
+fi
+
 # submodule のパスを取得し、既存ディレクトリをバックアップ（checkout後に.gitmodulesが読める）
 echo "  submodule 用の既存ディレクトリをバックアップ中..."
 if [ -f "$HOME/.gitmodules" ]; then
-    # pipefail 回避: for + command substitution で処理
     subpaths=$(git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}') || true
     for subpath in $subpaths; do
+        # .ssh はスキップ（手動配置済み、submoduleで上書きしない）
+        if [ "$subpath" = ".ssh" ]; then
+            continue
+        fi
         if [ -e "$HOME/$subpath" ]; then
             mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
             mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
@@ -98,9 +117,18 @@ if [ -f "$HOME/.gitmodules" ]; then
     done
 fi
 
-# submodule
-echo "  submodule を初期化中..."
-dotfiles submodule update --init --recursive
+# submodule（.ssh 以外を初期化）
+echo "  submodule を初期化中（.ssh は手動配置済みのためスキップ）..."
+if [ -f "$HOME/.gitmodules" ]; then
+    subpaths=$(git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}') || true
+    for subpath in $subpaths; do
+        if [ "$subpath" = ".ssh" ]; then
+            echo "    スキップ: .ssh（手動配置済み）"
+            continue
+        fi
+        dotfiles submodule update --init --recursive -- "$subpath" || echo "    警告: $subpath の初期化に失敗"
+    done
+fi
 echo "  submodule 初期化完了"
 
 # --------------------------------------------------------

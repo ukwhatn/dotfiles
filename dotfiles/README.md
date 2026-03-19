@@ -4,6 +4,11 @@ bare repository 方式で管理する dotfiles。
 
 ## 新マシンセットアップ
 
+### 前提条件
+
+`~/.ssh/` に SSH 鍵を配置してから実行すること（GitHub へのアクセスに必要）。
+`.ssh` submodule のリポジトリから ZIP ダウンロード → 展開 → `chmod 600 ~/.ssh/*` で配置。
+
 ### ワンライナー
 
 ```bash
