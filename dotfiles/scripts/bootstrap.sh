@@ -67,16 +67,6 @@ git clone --bare "$REMOTE_URL" "$DOTFILES_GIT"
 dotfiles config status.showUntrackedFiles no
 dotfiles config init.defaultBranch main
 
-# submodule のパスを取得し、既存ディレクトリをバックアップ
-echo "  submodule 用の既存ディレクトリをバックアップ中..."
-dotfiles config -f .gitmodules --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}' | while read -r subpath; do
-    if [ -e "$HOME/$subpath" ]; then
-        mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
-        mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
-        echo "    バックアップ: $subpath"
-    fi
-done
-
 # checkout（コンフリクト時はバックアップして再試行）
 if ! dotfiles checkout 2>/dev/null; then
     echo "  コンフリクトするファイルをバックアップします..."
@@ -91,6 +81,16 @@ if ! dotfiles checkout 2>/dev/null; then
     dotfiles checkout
 fi
 echo "  checkout 完了"
+
+# submodule のパスを取得し、既存ディレクトリをバックアップ（checkout後に.gitmodulesが読める）
+echo "  submodule 用の既存ディレクトリをバックアップ中..."
+git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}' | while read -r subpath; do
+    if [ -e "$HOME/$subpath" ] && [ ! -d "$HOME/$subpath/.git" ]; then
+        mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
+        mv "$HOME/$subpath" "$BACKUP_DIR/$subpath"
+        echo "    バックアップ: $subpath"
+    fi
+done || true
 
 # submodule
 echo "  submodule を初期化中..."
