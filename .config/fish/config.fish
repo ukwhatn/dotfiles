@@ -8,10 +8,6 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # uv
 fish_add_path $HOME/.local/bin
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/yuki.c.watanabe/.rd/bin"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
