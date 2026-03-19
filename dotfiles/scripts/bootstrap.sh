@@ -82,12 +82,13 @@ for f in $tracked_files; do
     # .ssh 配下はスキップ
     case "$f" in .ssh|.ssh/*) continue ;; esac
     if [ -e "$HOME/$f" ]; then
-        rm -rf "$HOME/$f"
+        mkdir -p "$(dirname "$BACKUP_DIR/$f")"
+        mv "$HOME/$f" "$BACKUP_DIR/$f"
     fi
 done
 # submodule ディレクトリも .ssh 以外を削除
 if [ -f "$HOME/.gitmodules" ]; then
-    rm -f "$HOME/.gitmodules"
+    mv "$HOME/.gitmodules" "$BACKUP_DIR/.gitmodules"
 fi
 dotfiles checkout --force
 echo "  checkout 完了"
@@ -107,7 +108,10 @@ if [ -f "$HOME/.gitmodules" ]; then
     subpaths=$(git config -f "$HOME/.gitmodules" --get-regexp 'submodule\..*\.path' 2>/dev/null | awk '{print $2}') || true
     for subpath in $subpaths; do
         case "$subpath" in .ssh) continue ;; esac
-        rm -rf "$HOME/$subpath" 2>/dev/null || true
+        if [ -e "$HOME/$subpath" ]; then
+            mkdir -p "$(dirname "$BACKUP_DIR/$subpath")"
+            mv "$HOME/$subpath" "$BACKUP_DIR/$subpath" 2>/dev/null || true
+        fi
     done
 fi
 
